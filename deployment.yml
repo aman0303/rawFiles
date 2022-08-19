@@ -21,5 +21,3 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
-      imagePullSecrets:
-      - name: acr-secret-simplewebapi
