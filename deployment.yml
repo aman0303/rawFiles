@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: simple-web-api
+  name: simple-web-api
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: simple-web-api
+  template:
+    metadata:
+      labels:
+        run: simple-web-api
+    spec:
+      containers:
+      - name: simple-web-api
+        image: {{latestImage}}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: acr-secret-simplewebapi
