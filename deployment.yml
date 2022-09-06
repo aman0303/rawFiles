@@ -2,22 +2,48 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: simple-web-api
-  name: simple-web-api
+    app: ids-service
+  name: ids-service-deployment
   namespace: default
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      run: simple-web-api
+      app: ids-service
   template:
     metadata:
       labels:
-        run: simple-web-api
+        app: ids-service
     spec:
       containers:
-      - name: simple-web-api
-        image: {{latestImage}}
-        imagePullPolicy: IfNotPresent
+      - name: ids-service
+        image: mci4mcontainerregistry.azurecr.io/ids.service:hello
+        imagePullPolicy: Always
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: K8Pod
         ports:
-        - containerPort: 8080
+        - containerPort: 8001
+        volumeMounts:
+        - name: app-settings-config-volume
+          mountPath: /app/Config
+      volumes:
+      - name: app-settings-config-volume
+        configMap:
+          name: app-settings-config
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ids-service-service
+  namespace: default
+  labels:
+    svc: ids-service-service
+spec:
+  selector:
+    app: ids-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8001
+  type: LoadBalancer
