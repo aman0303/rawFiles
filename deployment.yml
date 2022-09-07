@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ids-service
-        image: mci4mcontainerregistry.azurecr.io/ids.service:hello
+        image: ##IDS_SERVICE_IMAGE##
         imagePullPolicy: Always
         env:
         - name: ASPNETCORE_ENVIRONMENT
@@ -30,7 +30,7 @@ spec:
       volumes:
       - name: app-settings-config-volume
         configMap:
-          name: app-settings-config
+          name: ##APP_SETTINGS_CONFIGMAP##
 ---
 kind: Service
 apiVersion: v1
