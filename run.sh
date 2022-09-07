@@ -12,8 +12,10 @@ updatedAppSettingsFile="./appSettings.K8Pod.json";
 
 sed "s/##TEST_VALUE##/New-Value/g" $appSettingsFile > $updatedAppSettingsFile;
 
-sed "s/##IDS_SERVICE_IMAGE##/New-Image/g" $k8DeploymentFile > $updatedK8DeploymentFile;
-sed "s/##APP_SETTINGS_CONFIGMAP##/New-Configmap/g" $k8DeploymentFile > $updatedK8DeploymentFile;
+sed -e "s/##IDS_SERVICE_IMAGE##/New-Image/g ; s/##APP_SETTINGS_CONFIGMAP##/New-Configmap/g" $k8DeploymentFile > $updatedK8DeploymentFile;
 
+echo "---------------------------------------------------------------------------------------------";
 cat $updatedK8DeploymentFile;
+echo "---------------------------------------------------------------------------------------------";
 cat $updatedAppSettingsFile;
+echo "---------------------------------------------------------------------------------------------";
