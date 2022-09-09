@@ -66,7 +66,7 @@
         "contributorRoleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
         "deploymentScriptName": "InstallDependencyAndRunWebServer",
         "latestImagePath": "mci4mcontainerregistry.azurecr.io\\/ids.service:hello",
-        "testConfigValue": "from-arm-sc-test"
+        "testConfigValue": "from-arm-sc-test-v2"
     },
     "resources": [
         {
