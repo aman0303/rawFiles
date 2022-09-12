@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdsservice-deployment
+  labels:
+    app: mdsservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mdsservice
+  template:
+    metadata:
+      labels:
+        app: mdsservice
+    spec:
+      volumes:
+        - name: mds-appsettings-volume
+          configMap:
+            name: ##MDS_APP_SETTINGS_CONFIGMAP##
+      containers:
+        - name: mdsservice
+          image: ##MDS_SERVICE_IMAGE_NAME##
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: mds-appsettings-volume
+              mountPath: /app/appsettings.prod.json
+              subPath: appsettings.prod.json
+          imagePullPolicy: Always
+      nodeSelector:
+        agentpool: appool
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdsservice-loadbalancer-service
+  labels:
+    app: mdsservice
+spec:
+  type: LoadBalancer
+  selector:
+    app: mdsservice
+  ports:
+    - port: 80
+      targetPort: 80
