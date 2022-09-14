@@ -10,8 +10,6 @@ wget -O $appSettingsFile $appSettingsFileUrl;
 updatedK8DeploymentFile="./deploymentMDS.yml";
 updatedAppSettingsFile="./appsettings.prod.json";
 
-DatabaseServiceEndpoint="http://localhost/8080";
-
 sed -r -E -e "s%##DATABASE_ID##%$DatabaseId%g" \
           -e "s%##DATABASE_SERVICE_ENDPOINT##%$DatabaseServiceEndpoint%g" \
           -e "s%##DATABASE_ACCOUNT_URI##%$DatabaseAccountUri%g" \
