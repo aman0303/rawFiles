@@ -45,14 +45,18 @@ echo "--------------------------------------------------------------------------
 cat $updatedAppSettingsFile;
 echo "---------------------------------------------------------------------------------------------";
 
-# # Installs kubectl CLI
-# az aks install-cli;
-# PATH="$PATH:$HOME/bin:$PATH"
-# kubectl version --short;
-# # Merge credentials into .kube/config
-# az aks get-credentials --resource-group $AksResourceGroupName --name $AksClusterName;
-# # Default namespace will be used from here
-# kubectl create configmap $appSettingsConfigmap --from-file=$updatedAppSettingsFile;
-# kubectl apply -f $updatedK8DeploymentFile;
-# kubectl get deployments;
-# kubectl get services;
+# Installs kubectl CLI
+az aks install-cli;
+
+PATH="$PATH:$HOME/bin:$PATH";
+
+kubectl version --short;
+
+# Merge credentials into .kube/config
+az aks get-credentials --resource-group $AksResourceGroupName --name $AksClusterName;
+
+# Default namespace will be used from here
+kubectl create configmap $appSettingsConfigmap --from-file=$updatedAppSettingsFile;
+kubectl apply -f $updatedK8DeploymentFile;
+kubectl get deployments;
+kubectl get services;
