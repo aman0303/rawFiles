@@ -53,6 +53,7 @@ PATH="$PATH:$HOME/bin:$PATH";
 kubectl version --short;
 
 # Merge credentials into .kube/config
+az account set -s $AksSubscriptionId;
 az aks get-credentials --resource-group $AksResourceGroupName --name $AksClusterName;
 
 # Default namespace will be used from here
