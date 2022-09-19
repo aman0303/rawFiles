@@ -28,8 +28,6 @@ spec:
               mountPath: /app/appsettings.prod.json
               subPath: appsettings.prod.json
           imagePullPolicy: Always
-      nodeSelector:
-        agentpool: appool
 ---
 apiVersion: v1
 kind: Service
