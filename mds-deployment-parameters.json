@@ -1,0 +1,184 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "West US"
+        },
+        "databaseResourceGroupName": {
+            "value": "kraman2-df-database"
+        },
+        "synapseResourceGroupName": {
+            "value": "kraman2-df-synapse"
+        },
+        "synapseStorageAccountName": {
+            "value": "kraman2dfsynapsestorage" 
+        },
+        "synapseStorageAccountLocation": {
+            "value": "West US"
+        },
+        "synapseFileSystemContainerName": {
+            "value": "synapsefilesystem"
+        },
+        "synapseWorkspaceName": {
+            "value": "kraman2-idscore-dfsynapse"
+        },
+        "synapseWorkspaceLocation": {
+            "value": "West US"
+        },
+        "synapseRoleAssignmentId": {
+            "value": "7d300659-0f1d-477e-b9bc-233fc0cdecfc"
+        },
+        "synapseStorageRoleAssignmentId": {
+            "value": "6874fd9d-40e5-473c-8741-d91555449d17"
+        },
+        "acrResourceGroup": {
+            "value": "kraman2-df-acr"
+        },
+        "acrRegistryName": {
+            "value": "kraman2mdscoredf"
+        },
+        "acrZoneRedundancy": {
+            "value": "disabled"
+        },
+        "acrRegistrySku": {
+            "value": "Standard"
+        },
+        "acrRegistryApiVersion": {
+            "value": "2020-11-01-preview"
+        },
+        "acrPublicNetworkAccess": {
+            "value": "Enabled"
+        },
+        "acrPullRoleAssignmentId": {
+            "value": "ab0e0830-7b06-4f37-9344-b5e47c915aed"
+        },
+        "aksResourceGroupName": {
+            "value": "kraman2-df-aks"
+        },
+        "aksClusterName": {
+            "value": "kraman2-df-cluster"
+        },
+        "aksClusterLocation": {
+            "value": "East US"
+        },
+        "aksDnsPrefix": {
+            "value": "kraman2-aks-df-dns"
+        },
+        "aksOsDiskSizeGB": {
+            "value": 0
+        },
+        "kubernetesVersion": {
+            "value": "1.23.8"
+        },
+        "aksNetworkPlugin": {
+            "value": "azure"
+        },
+        "kubernetesRBACEnabled": {
+            "value": true
+        },
+        "aksLocalAccountsDisabled": {
+            "value": false
+        },
+        "aksPrivateClusterEnabled": {
+            "value": false
+        },
+        "aksHttpApplicationRoutingEnabled": {
+            "value": false
+        },
+        "aksAzurePolicyEnabled": {
+            "value": false
+        },
+        "aksSecretStoreCSIDriverEnabled": {
+            "value": false
+        },
+        "vNetName": {
+            "value": "kraman2-df-vnet"
+        },
+        "aksServiceCidr": {
+            "value": "10.0.0.0/16"
+        },
+        "aksDnsServiceIP": {
+            "value": "10.0.0.10"
+        },
+        "aksDockerBridgeCidr": {
+            "value": "172.17.0.1/16"
+        },
+        "aksVNetContributorRoleAssignmentId": {
+            "value": "61f07319-deef-4fe6-a9e2-ff4497c7ce37"
+        },
+        "cosmosDBAccountName": {
+            "value": "kraman2-df-cosmos"
+        },
+        "primaryCosmosDBRegion": {
+            "value": "West US"
+        },
+        "multipleWriteLocations": {
+            "value": false
+        },
+        "enableZoneRedundancy": {
+            "value": false
+        },
+        "mdsDatabaseName": {
+            "value": "kraman2-Mds"
+        },
+        "mdsContainers": {
+            "value": [
+                {
+                    "Name": "IDSCoreCollection",
+                    "Throughput": 400,
+                    "PartitionKeyPaths": ["/partitionKey"]
+                },
+                {
+                    "Name": "TargetEntitySchemaCollection",
+                    "Throughput": 400,
+                    "PartitionKeyPaths": ["/partitionKey"]
+                },
+                {
+                    "Name": "KPIDefinitionCollection",
+                    "Throughput": 400,
+                    "PartitionKeyPaths": ["/partitionKey"]
+                }
+            ]
+        },
+        "clusterRoleAssignmentId": {
+            "value": "45a4bc2a-f9f7-403a-b025-eaf4a5e978ca"
+        },
+        "jobQueueStorageAccountName": {
+            "value": "kraman2jobqueuestoragedf"
+        },
+        "jobQueueStorageSkuName": {
+            "value": "Standard_LRS"
+        },
+        "jobQueueStorageSkuTier": {
+            "value": "Standard"
+        },
+        "jobQueueStorageRoleAssignmentId": {
+            "value": "fd857a16-258d-4b2c-bf5d-886f1d619e3c"
+        },
+        "jobKeyOperatorStorageRoleAssignmentId": {
+            "value": "d18bf906-95bf-48bc-a6f0-1615c9d15f66"
+        },
+        "logAnalyticsName": {
+            "value": "kraman2-df-analytics"
+        },
+        "logAnalyticsSku": {
+            "value": "pergb2018"
+        },
+        "appInsightsName": {
+            "value": "kraman2-df-insights"
+        },
+        "appInsightsType": {
+            "value": "web"
+        },
+        "appInsightsRequestSource": {
+            "value": "IbizaAIExtension"
+        },
+        "clusterKeyVaultName": {
+            "value": "kraman2-df-kv"
+        },
+        "clusterKeyVaultSku": {
+            "value": "Standard"
+        }
+    }
+}
