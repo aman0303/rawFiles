@@ -4,7 +4,7 @@ metadata:
   name: mds-appsettings
 data:
   appsettings.prod.json: |-
-    ##prodsettings##
+    ##PROD_SETTINGS##
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -12,4 +12,4 @@ metadata:
   name: mds-jobsettings
 data:
   jobsettings.prod.json: |-
-    ##prodjobsettings##
+    ##PROD_JOB_SETTINGS##
