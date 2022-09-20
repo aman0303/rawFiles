@@ -16,6 +16,7 @@ wget -O $configmapFile $configmapFileUrl;
 updatedK8DeploymentFile="./deployment.yml";
 updatedAppSettingsFile="./appsettings.prod.json";
 updatedWorkerJobSettingsFile="./jobsettings.prod.json";
+updatedConfigmapFile="./configmap.yml";
 
 sed -r -E -e "s%##DATABASE_ID##%$DatabaseId%g" \
           -e "s%##DATABASE_SERVICE_ENDPOINT##%$DatabaseServiceEndpoint%g" \
@@ -59,20 +60,22 @@ sed -r -E -e "s%##DATABASE_ID##%$DatabaseId%g" \
           -e "s%##APP_INSIGHTS_INSTRUMENTATION_KEY##%$AppInsightsInstrumentationKey%g" \
           -e "s%##HOSTED_ENV_MSI_CLIENT_ID##%$HostedEnvMsiVlientId%g" $workerJobSettingsFile > $updatedWorkerJobSettingsFile;
 
-UUID=$(cat /proc/sys/kernel/random/uuid);
-AppSettingsConfigmap="mds-app-settings-configmap-$UUID";
+AppSettingsString=$(cat $updatedAppSettingsFile);
+WorkerJobSettingsString=$(cat $updatedWorkerJobSettingsFile);
 
-cat $k8DeploymentFile;
-echo "---------------------------------------------------------------------------------------------";
-cat $appSettingsFile;
-echo "---------------------------------------------------------------------------------------------";
+sed -r -E -e "s%##prodsettings##%$AppSettingsString%g" \
+          -e "s%##prodjobsettings##%$WorkerJobSettingsString%g" $configmapFile > $updatedConfigmapFile;
 
-sed -r -E -e "s%##MDS_SERVICE_IMAGE_NAME##%$IdsServiceImageName%g" \
-          -e "s%##MDS_APP_SETTINGS_CONFIGMAP##%$AppSettingsConfigmap%g" $k8DeploymentFile > $updatedK8DeploymentFile;
+sed -r -E -e "s%##imagename##%$IdsServiceImageName%g" \
+          -e "s%##workerimagename##%$WorkerServiceImageName%g" $k8DeploymentFile > $updatedK8DeploymentFile;
 
 cat $updatedK8DeploymentFile;
 echo "---------------------------------------------------------------------------------------------";
 cat $updatedAppSettingsFile;
+echo "---------------------------------------------------------------------------------------------";
+cat $updatedWorkerJobSettingsFile;
+echo "---------------------------------------------------------------------------------------------";
+cat $updatedConfigmapFile;
 echo "---------------------------------------------------------------------------------------------";
 
 # Installs kubectl CLI
