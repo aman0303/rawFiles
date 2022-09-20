@@ -60,11 +60,14 @@ sed -r -E -e "s%##DATABASE_ID##%$DatabaseId%g" \
           -e "s%##APP_INSIGHTS_INSTRUMENTATION_KEY##%$AppInsightsInstrumentationKey%g" \
           -e "s%##HOSTED_ENV_MSI_CLIENT_ID##%$HostedEnvMsiVlientId%g" $workerJobSettingsFile > $updatedWorkerJobSettingsFile;
 
-AppSettingsString=$(cat $updatedAppSettingsFile);
-WorkerJobSettingsString=$(cat $updatedWorkerJobSettingsFile);
+AppSettingsString="$(cat $updatedAppSettingsFile)";
+WorkerJobSettingsString="$(cat $updatedWorkerJobSettingsFile)";
 
-sed -r -E -e "s%##prodsettings##%$AppSettingsString%g" \
-          -e "s%##prodjobsettings##%$WorkerJobSettingsString%g" $configmapFile > $updatedConfigmapFile;
+AppSettingsString=`echo $AppSettingsString | perl -pe 's/\r\n//g'`;
+WorkerJobSettingsString=`echo $WorkerJobSettingsString | perl -pe 's/\r\n//g'`;
+
+sed -r -E -e "s%##PROD_SETTINGS##%$AppSettingsString%g" \
+          -e "s%##PROD_JOB_SETTINGS##%$WorkerJobSettingsString%g" $configmapFile > $updatedConfigmapFile;
 
 sed -r -E -e "s%##imagename##%$IdsServiceImageName%g" \
           -e "s%##workerimagename##%$WorkerServiceImageName%g" $k8DeploymentFile > $updatedK8DeploymentFile;
