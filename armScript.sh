@@ -93,7 +93,8 @@ az account set -s $AksSubscriptionId;
 az aks get-credentials --resource-group $AksResourceGroupName --name $AksClusterName;
 
 # Default namespace will be used from here
-kubectl create configmap $AppSettingsConfigmap --from-file=$updatedAppSettingsFile;
+# kubectl create configmap $AppSettingsConfigmap --from-file=$updatedAppSettingsFile;
+kubectl apply -f $updatedConfigmapFile;
 kubectl apply -f $updatedK8DeploymentFile;
 kubectl get deployments;
 kubectl get services;
