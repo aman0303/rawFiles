@@ -1,0 +1,2074 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "East US 2",
+            "metadata": {
+                "description": "Azure location where all the resources will be created."
+            }
+        },
+        "acrResourceGroup": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of resource group for Azure Container Registry"
+            }
+        },
+        "databaseResourceGroupName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of resource group where database will be created"
+            }
+        },
+        "synapseResourceGroupName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of resource group where synapse workspace will be created"
+            }
+        },
+        "synapseStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account name to be used by the synapse workspace."
+            }
+        },
+        "synapseStorageAccountLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account location."
+            }
+        },
+        "synapseFileSystemContainerName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name for the container to be created in Storage account used by the synapse workspace."
+            }
+        },
+        "synapseWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Synapse workspace name."
+            }
+        },
+        "synapseWorkspaceLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "Synapse workspace location."
+            }
+        },
+        "synapseStorageRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for blob storage contributor role assignment of synapse identity to storage account."
+            }
+        },
+        "synapseRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for admin role assignment of cluster managed identity to synapse workspace."
+            }
+        },
+        "acrRegistryName": {
+            "type": "string"
+        },
+        "acrZoneRedundancy": {
+            "type": "string"
+        },
+        "acrRegistrySku": {
+            "type": "string"
+        },
+        "acrRegistryApiVersion": {
+            "type": "string"
+        },
+        "acrPublicNetworkAccess": {
+            "type": "string"
+        },
+        "acrPullRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for AcrPull role assignment of aks cluster managed identity to acr registry."
+            }
+        },
+        "aksResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the resource group containing Managed Cluster."
+            }
+        },
+        "aksClusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Managed Cluster resource."
+            }
+        },
+        "aksClusterLocation": {
+            "type": "string",
+            "defaultValue": "East US 2",
+            "metadata": {
+                "description": "Azure location where all the AKS resources will be created."
+            }
+        },
+        "aksDnsPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+            }
+        },
+        "aksOsDiskSizeGB": {
+            "defaultValue": 0,
+            "minValue": 0,
+            "maxValue": 1023,
+            "type": "int",
+            "metadata": {
+                "description": "Disk size (in GiB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+            }
+        },
+        "kubernetesVersion": {
+            "defaultValue": "1.7.7",
+            "type": "string",
+            "metadata": {
+                "description": "The version of Kubernetes."
+            }
+        },
+        "aksNetworkPlugin": {
+            "allowedValues": [
+                "azure",
+                "kubenet"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Network plugin used for building Kubernetes network."
+            }
+        },
+        "kubernetesRBACEnabled": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off of RBAC."
+            }
+        },
+        "aksLocalAccountsDisabled": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Enable or disable local accounts."
+            }
+        },
+        "aksPrivateClusterEnabled": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Enable private network access to the Kubernetes cluster."
+            }
+        },
+        "aksDefenderProfileEnabled": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Enable defender security profile on the Kubernetes cluster."
+            }
+        },
+        "aksHttpApplicationRoutingEnabled": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off http application routing."
+            }
+        },
+        "aksAzurePolicyEnabled": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off Azure Policy addon."
+            }
+        },
+        "aksSecretStoreCSIDriverEnabled": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off secret store CSI driver."
+            }
+        },
+        "aksOmsAgentEnabled": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off omsagent addon."
+            }
+        },
+        "vNetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource Name of virtual network used for nodes and/or pods IP assignment."
+            }
+        },
+        "aksVNetContributorRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for Network Contributor role assignment of aks cluster managed identity to vNet."
+            }
+        },
+        "aksServiceCidr": {
+            "type": "string",
+            "metadata": {
+                "description": "A CIDR notation IP range from which to assign service cluster IPs."
+            }
+        },
+        "aksDnsServiceIP": {
+            "type": "string",
+            "metadata": {
+                "description": "Containers DNS server IP address."
+            }
+        },
+        "aksDockerBridgeCidr": {
+            "type": "string",
+            "metadata": {
+                "description": "A CIDR notation IP for Docker bridge."
+            }
+        },
+        "cosmosDBAccountName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Cosmos DB account name, max length 44 characters"
+            }
+        },
+        "mdsDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name for the MDS SQL database"
+            }
+        },
+        "mdsContainers": {
+            "type": "array",
+            "metadata": {
+                "description": "Containers to be added to MDS database"
+            }
+        },
+        "mdsJobContainer": {
+            "type": "object",
+            "defaultValue": {
+                "Name": "JobsCollection",
+                "Throughput": 400,
+                "PartitionKeyPaths": ["/pk"]
+            },
+            "metadata": {
+                "description": "The MDS Jobs Container for BJS."
+            }
+        },
+        "primaryCosmosDBRegion": {
+            "type": "string",
+            "metadata": {
+                "description": "The primary replica region for the Cosmos DB account."
+            }
+        },
+        "secondaryCosmosDBRegion": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The secondary replica region for the Cosmos DB account."
+            }
+        },
+        "multipleWriteLocations": {
+            "type": "bool",
+            "defaultValue": false,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Enable multi-master to make all regions writable."
+            }
+        },
+        "enableZoneRedundancy": {
+            "type": "bool",
+            "defaultValue": false,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Enable zone redundancy for all regions."
+            }
+        },
+        "consistencyPolicy": {
+            "type": "object",
+            "defaultValue": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "metadata": {
+                "description": "The default consistency option of the Cosmos DB account."
+            }
+        },
+        "databaseAccountOfferType": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "metadata": {
+                "description": "The offer type for the Cosmos DB database account"
+            },
+            "allowedValues": [
+                "Standard"
+            ]
+        },
+        "clusterRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for role assignment of AKS cluster managed identity to cosmos DB."
+            }
+        },
+        "jobQueueStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of storage account for job queues"
+            }
+        },
+        "jobQueueStorageSkuName": {
+            "type": "string",
+            "metadata": {
+                "description": "MDS job queue sku name"
+            }
+        },
+        "jobQueueStorageSkuTier": {
+            "type": "string",
+            "metadata": {
+                "description": "MDS job queue sku tier"
+            }
+        },
+        "jobQueueStorageRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for storage queue contributor role assignment of AKS cluster managed identity to storage."
+            }
+        },
+        "blobStorageContributorRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for storage blob contributor role assignment of AKS cluster managed identity to storage."
+            }
+        },
+        "blobKeyOperatorStorageRoleAssignmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Id for storage key operator role assignment of AKS cluster managed identity to storage."
+            }
+        },
+        "logAnalyticsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Log analytics workspace name."
+            }
+        },
+        "logAnalyticsSku": {
+            "type": "string",
+            "metadata": {
+                "description": "Log analytics workspace sku."
+            }
+        },
+        "appInsightsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Application Insights resource."
+            }
+        },
+        "appInsightsType": {
+            "type": "string",
+            "metadata": {
+                "description": "Type of app you are deploying. This field is for legacy reasons and will not impact the type of App Insights resource you deploy."
+            }
+        },
+        "appInsightsRequestSource": {
+            "type": "string",
+            "metadata": {
+                "description": "Source of Azure Resource Manager deployment"
+            }
+        },
+        "clusterKeyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the cluster key vault"
+            }
+        },
+        "clusterKeyVaultSku": {
+            "type": "string",
+            "metadata": {
+                "description": "Sku of the cluster key vault"
+            }
+        }
+    },
+    "variables": {
+        "cosmosDBAccountName": "[toLower(parameters('cosmosDBAccountName'))]",
+        "jobQueueStorageAccountName": "[toLower(parameters('jobQueueStorageAccountName'))]",
+        "locationsWithSecondaryRegion": [
+            {
+                "locationName": "[parameters('primaryCosmosDBRegion')]",
+                "failoverPriority": 0,
+                "isZoneRedundant": "[parameters('enableZoneRedundancy')]"
+            },
+            {
+                "locationName": "[parameters('secondaryCosmosDBRegion')]",
+                "failoverPriority": 1,
+                "isZoneRedundant": "[parameters('enableZoneRedundancy')]"
+            }
+        ],
+        "locationsWithoutSecondaryRegion": [
+            {
+                "locationName": "[parameters('primaryCosmosDBRegion')]",
+                "failoverPriority": 0,
+                "isZoneRedundant": "[parameters('enableZoneRedundancy')]"
+            }
+        ],
+        "locations": "[if(empty(parameters('secondaryCosmosDBRegion')), variables('locationsWithoutSecondaryRegion'), variables('locationsWithSecondaryRegion'))]",
+        "aksVnetSubnetID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('aksResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vNetName') ,'/subnets/default')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('acrResourceGroup')]",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('aksClusterLocation')]",
+            "name": "[parameters('aksResourceGroupName')]",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('databaseResourceGroupName')]",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('synapseResourceGroupName')]",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-09-01",
+            "name": "ContainerRegistryDeployment",
+            "resourceGroup": "[parameters('acrResourceGroup')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/resourceGroups/', parameters('acrResourceGroup'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                    },
+                    "resources": [
+                        {
+                            "name": "[parameters('acrRegistryName')]",
+                            "type": "Microsoft.ContainerRegistry/registries",
+                            "location": "[parameters('location')]",
+                            "apiVersion": "[parameters('acrRegistryApiVersion')]",
+                            "sku": {
+                                "name": "[parameters('acrRegistrySku')]"
+                            },
+                            "dependsOn": [],
+                            "properties": {
+                                "acrPublicNetworkAccess": "[parameters('acrPublicNetworkAccess')]",
+                                "acrZoneRedundancy": "[parameters('acrZoneRedundancy')]"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "AksVnetDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('aksResourceGroupName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/resourceGroups/', parameters('aksResourceGroupName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2020-11-01",
+                            "name": "[parameters('vNetName')]",
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "location": "[parameters('aksClusterLocation')]",
+                            "properties": {
+                                "subnets": [
+                                    {
+                                        "name": "default",
+                                        "id": "[variables('aksVnetSubnetID')]",
+                                        "properties": {
+                                            "addressPrefix": "10.240.0.0/16"
+                                        }
+                                    }
+                                ],
+                                "addressSpace": {
+                                    "addressPrefixes": [
+                                        "10.0.0.0/8"
+                                    ]
+                                }
+                            },
+                            "tags": {}
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-09-01",
+            "name": "KubernetesClusterDeployment",
+            "resourceGroup": "[parameters('aksResourceGroupName')]",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/resourceGroups/', parameters('aksResourceGroupName'))]",
+                "ContainerRegistryDeployment",
+                "AksVnetDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "aksClusterLocation": {
+                        "value": "[parameters('aksClusterLocation')]"
+                    },
+                    "aksResourceGroupName": {
+                        "value": "[parameters('aksResourceGroupName')]"
+                    },
+                    "aksClusterName": {
+                        "value": "[parameters('aksClusterName')]"
+                    },
+                    "kubernetesVersion": {
+                        "value": "[parameters('kubernetesVersion')]"
+                    },
+                    "kubernetesRBACEnabled": {
+                        "value": "[parameters('kubernetesRBACEnabled')]"
+                    },
+                    "aksDnsPrefix": {
+                        "value": "[parameters('aksDnsPrefix')]"
+                    },
+                    "aksOsDiskSizeGB": {
+                        "value": "[parameters('aksOsDiskSizeGB')]"
+                    },
+                    "aksNetworkPlugin": {
+                        "value": "[parameters('aksNetworkPlugin')]"
+                    },
+                    "aksLocalAccountsDisabled": {
+                        "value": "[parameters('aksLocalAccountsDisabled')]"
+                    },
+                    "aksPrivateClusterEnabled": {
+                        "value": "[parameters('aksPrivateClusterEnabled')]"
+                    },
+                    "aksDefenderProfileEnabled": {
+                        "value": "[parameters('aksDefenderProfileEnabled')]"
+                    },
+                    "aksHttpApplicationRoutingEnabled": {
+                        "value": "[parameters('aksHttpApplicationRoutingEnabled')]"
+                    },
+                    "aksAzurePolicyEnabled": {
+                        "value": "[parameters('aksAzurePolicyEnabled')]"
+                    },
+                    "aksSecretStoreCSIDriverEnabled": {
+                        "value": "[parameters('aksSecretStoreCSIDriverEnabled')]"
+                    },
+                    "aksOmsAgentEnabled": {
+                        "value": "[parameters('aksOmsAgentEnabled')]"
+                    },
+                    "aksVnetSubnetID": {
+                        "value": "[variables('aksVnetSubnetID')]"
+                    },
+                    "aksServiceCidr": {
+                        "value": "[parameters('aksServiceCidr')]"
+                    },
+                    "aksDnsServiceIP": {
+                        "value": "[parameters('aksDnsServiceIP')]"
+                    },
+                    "aksDockerBridgeCidr": {
+                        "value": "[parameters('aksDockerBridgeCidr')]"
+                    },
+                    "logAnalyticsName": {
+                        "value": "[parameters('logAnalyticsName')]"
+                    },
+                    "logAnalyticsSku": {
+                        "value": "[parameters('logAnalyticsSku')]"
+                    },
+                    "appInsightsName": {
+                        "value": "[parameters('appInsightsName')]"
+                    },
+                    "appInsightsType": {
+                        "value": "[parameters('appInsightsType')]"
+                    },
+                    "appInsightsRequestSource": {
+                        "value": "[parameters('appInsightsRequestSource')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "aksClusterLocation": {
+                            "type": "string"
+                        },
+                        "aksResourceGroupName": {
+                            "type": "string"
+                        },
+                        "aksClusterName": {
+                            "type": "string"
+                        },
+                        "kubernetesVersion": {
+                            "type": "string"
+                        },
+                        "kubernetesRBACEnabled": {
+                            "type": "bool"
+                        },
+                        "aksDnsPrefix": {
+                            "type": "string"
+                        },
+                        "aksOsDiskSizeGB": {
+                            "type": "int"
+                        },
+                        "aksNetworkPlugin":
+                        {
+                            "type": "string"
+                        },
+                        "aksLocalAccountsDisabled": {
+                            "type": "bool"
+                        },
+                        "aksPrivateClusterEnabled": {
+                            "type": "bool"
+                        },
+                        "aksDefenderProfileEnabled": {
+                            "type": "bool"
+                        },
+                        "aksHttpApplicationRoutingEnabled": {
+                            "type": "bool"
+                        },
+                        "aksAzurePolicyEnabled": {
+                            "type": "bool"
+                        },
+                        "aksSecretStoreCSIDriverEnabled": {
+                            "type": "bool"
+                        },
+                        "aksOmsAgentEnabled": {
+                            "type": "bool"
+                        },
+                        "aksVnetSubnetID": {
+                            "type": "string"
+                        },
+                        "aksServiceCidr": {
+                            "type": "string"
+                        },
+                        "aksDnsServiceIP": {
+                            "type": "string"
+                        },
+                        "aksDockerBridgeCidr": {
+                            "type": "string"
+                        },
+                        "logAnalyticsName": {
+                            "type": "string"
+                        },
+                        "logAnalyticsSku": {
+                            "type": "string"
+                        },
+                        "appInsightsName": {
+                            "type": "string"
+                        },
+                        "appInsightsType": {
+                            "type": "string"
+                        },
+                        "appInsightsRequestSource": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {
+                        "logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "2022-06-01",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+                            ],
+                            "type": "Microsoft.ContainerService/managedClusters",
+                            "location": "[parameters('aksClusterLocation')]",
+                            "name": "[parameters('aksClusterName')]",
+                            "properties": {
+                                "kubernetesVersion": "[parameters('kubernetesVersion')]",
+                                "enableRBAC": "[parameters('kubernetesRBACEnabled')]",
+                                "dnsPrefix": "[parameters('aksDnsPrefix')]",
+                                "nodeResourceGroup": "[format('MC_{0}_{1}', parameters('aksResourceGroupName'), parameters('aksClusterName'))]",
+                                "agentPoolProfiles": [
+                                    {
+                                        "name": "systempool",
+                                        "osDiskSizeGB": "[parameters('aksOsDiskSizeGB')]",
+                                        "count": 3,
+                                        "enableAutoScaling": true,
+                                        "minCount": 1,
+                                        "maxCount": 5,
+                                        "vmSize": "Standard_DS2_v2",
+                                        "osType": "Linux",
+                                        "storageProfile": "ManagedDisks",
+                                        "type": "VirtualMachineScaleSets",
+                                        "mode": "System",
+                                        "maxPods": 110,
+                                        "availabilityZones": [
+                                            "1",
+                                            "2",
+                                            "3"
+                                        ],
+                                        "nodeTaints": [],
+                                        "enableNodePublicIP": false,
+                                        "tags": {},
+                                        "vnetSubnetID": "[parameters('aksVnetSubnetID')]"
+                                    },
+                                    {
+                                        "name": "apppool",
+                                        "osDiskSizeGB": "[parameters('aksOsDiskSizeGB')]",
+                                        "count": 3,
+                                        "enableAutoScaling": true,
+                                        "minCount": 1,
+                                        "maxCount": 5,
+                                        "vmSize": "Standard_DS2_v2",
+                                        "osType": "Linux",
+                                        "storageProfile": "ManagedDisks",
+                                        "type": "VirtualMachineScaleSets",
+                                        "mode": "User",
+                                        "maxPods": 110,
+                                        "availabilityZones": [
+                                            "1",
+                                            "2",
+                                            "3"
+                                        ],
+                                        "nodeTaints": [],
+                                        "enableNodePublicIP": false,
+                                        "tags": {},
+                                        "vnetSubnetID": "[parameters('aksVnetSubnetID')]"
+                                    }
+                                ],
+                                "networkProfile": {
+                                    "loadBalancerSku": "standard",
+                                    "networkPlugin": "[parameters('aksNetworkPlugin')]",
+                                    "serviceCidr": "[parameters('aksServiceCidr')]",
+                                    "dnsServiceIP": "[parameters('aksDnsServiceIP')]",
+                                    "dockerBridgeCidr": "[parameters('aksDockerBridgeCidr')]"
+                                },
+                                "disableLocalAccounts": "[parameters('aksLocalAccountsDisabled')]",
+                                "apiServerAccessProfile": {
+                                    "enablePrivateCluster": "[parameters('aksPrivateClusterEnabled')]"
+                                },
+                                "securityProfile": {
+                                    "defender": {
+                                        "securityMonitoring": {
+                                            "enabled": "[parameters('aksDefenderProfileEnabled')]"
+                                        }
+                                    }
+                                },
+                                "addonProfiles": {
+                                    "httpApplicationRouting": {
+                                        "enabled": "[parameters('aksHttpApplicationRoutingEnabled')]"
+                                    },
+                                    "azurepolicy": {
+                                        "enabled": "[parameters('aksAzurePolicyEnabled')]"
+                                    },
+                                    "azureKeyvaultSecretsProvider": {
+                                        "enabled": "[parameters('aksSecretStoreCSIDriverEnabled')]",
+                                        "config": null
+                                    },
+                                    "omsAgent": {
+                                        "enabled": "[parameters('aksOmsAgentEnabled')]",
+                                        "config": {
+                                            "logAnalyticsWorkspaceResourceID": "[variables('logAnalyticsWorkspaceResourceID')]"
+                                        }
+                                    }
+                                }
+                            },
+                            "tags": {},
+                            "sku": {
+                                "name": "Basic",
+                                "tier": "Paid"
+                            },
+                            "identity": {
+                                "type": "SystemAssigned"
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-03-15-preview",
+                            "name": "[parameters('logAnalyticsName')]",
+                            "location": "[parameters('aksClusterLocation')]",
+                            "type": "Microsoft.OperationalInsights/workspaces",
+                            "properties": {
+                                "sku": {
+                                    "name": "[parameters('logAnalyticsSku')]"
+                                }
+                            }
+                        },
+                        {
+                            "name": "[parameters('appInsightsName')]",
+                            "type": "microsoft.insights/components",
+                            "location": "[parameters('aksClusterLocation')]",
+                            "apiVersion": "2020-02-02-preview",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+                            ],
+                            "properties": {
+                                "ApplicationId": "[parameters('appInsightsName')]",
+                                "Application_Type": "[parameters('appInsightsType')]",
+                                "Flow_Type": "Redfield",
+                                "Request_Source": "[parameters('appInsightsRequestSource')]",
+                                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "aksClusterPrincipalId": {
+                            "type": "string",
+                            "value": "[reference(parameters('aksClusterName'),'2022-06-01','Full').identity.principalId]"
+                        },
+                        "aksClusterKubeletIdentityObjectId": {
+                            "type": "string",
+                            "value": "[reference(parameters('aksClusterName'), '2022-06-01').identityProfile.kubeletidentity.objectId]"
+                        },
+                        "aksClusterKubeletIdentityClientId": {
+                            "type": "string",
+                            "value": "[reference(parameters('aksClusterName'), '2022-06-01').identityProfile.kubeletidentity.clientId]"
+                        },
+                        "aksClusterKubeletIdentityResourceId": {
+                            "type": "string",
+                            "value": "[reference(parameters('aksClusterName'), '2022-06-01').identityProfile.kubeletidentity.resourceId]"
+                        },
+                        "aksClusterTenantId": {
+                            "type": "string",
+                            "value": "[reference(parameters('aksClusterName'),'2022-06-01','Full').identity.tenantId]"
+                        },
+                        "appInsightsInstrumentationKey": {
+                            "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2014-04-01').InstrumentationKey]",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "ConnectAKStoACRRoleAssignmentDeployment",
+            "resourceGroup": "[parameters('acrResourceGroup')]",
+            "dependsOn": [
+                "KubernetesClusterDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "2018-09-01-preview",
+                            "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
+                            "name": "[concat(parameters('acrRegistryName'), '/Microsoft.Authorization/', parameters('acrPullRoleAssignmentId'))]",
+                            "properties": {
+                                "principalId": "[reference('KubernetesClusterDeployment').outputs.aksClusterKubeletIdentityObjectId.value]",
+                                "principalType": "ServicePrincipal",
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '7f951dda-4ed3-4680-a7ca-43fe172d538d')]",
+                                "scope": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('acrResourceGroup'), '/providers/Microsoft.ContainerRegistry/registries/', parameters('acrRegistryName'))]"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "AKSClusterSubnetRoleAssignmentDeployment",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('aksResourceGroupName')]",
+            "dependsOn": [
+                "KubernetesClusterDeployment",
+                "AksVnetDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                    },
+                    "variables": {
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+                            "apiVersion": "2018-09-01-preview",
+                            "name": "[concat(parameters('vNetName'), '/default/Microsoft.Authorization/', parameters('aksVNetContributorRoleAssignmentId'))]",
+                            "properties": {
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+                                "principalId": "[reference('KubernetesClusterDeployment').outputs.aksClusterPrincipalId.value]",
+                                "principalType": "ServicePrincipal",
+                                "scope": "[variables('aksVnetSubnetID')]"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-09-01",
+            "name": "DatabaseDeployment",
+            "resourceGroup": "[parameters('databaseResourceGroupName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups', parameters('databaseResourceGroupName'))]",
+                "KubernetesClusterDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "cosmosDBAccountName": {
+                        "value": "[variables('cosmosDBAccountName')]"
+                    },
+                    "cosmosDBLocation": {
+                        "value": "[parameters('primaryCosmosDBRegion')]"
+                    },
+                    "multipleWriteLocations": {
+                        "value": "[parameters('multipleWriteLocations')]"
+                    },
+                    "consistencyPolicy": {
+                        "value": "[parameters('consistencyPolicy')]"
+                    },
+                    "databaseAccountOfferType": {
+                        "value": "[parameters('databaseAccountOfferType')]"
+                    },
+                    "mdsDatabaseName": {
+                        "value": "[parameters('mdsDatabaseName')]"
+                    },
+                    "mdsContainers": {
+                        "value": "[parameters('mdsContainers')]"
+                    },
+                    "mdsJobContainer": {
+                        "value": "[parameters('mdsJobContainer')]"
+                    },
+                    "jobQueueStorageAccountName": {
+                        "value": "[variables('jobQueueStorageAccountName')]"
+                    },
+                    "jobQueueStorageSkuName": {
+                        "value": "[parameters('jobQueueStorageSkuName')]"
+                    },
+                    "jobQueueStorageSkuTier": {
+                        "value": "[parameters('jobQueueStorageSkuTier')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "locations": {
+                        "value": "[variables('locations')]"
+                    },
+                    "clusterRoleAssignmentId": {
+                        "value": "[parameters('clusterRoleAssignmentId')]"
+                    },
+                    "aksClusterKubeletIdentityObjectId": {
+                        "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterKubeletIdentityObjectId.value]"
+                    },
+                    "jobQueueStorageRoleAssignmentId": {
+                        "value": "[parameters('jobQueueStorageRoleAssignmentId')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "cosmosDBAccountName": {
+                            "type": "string"
+                        },
+                        "cosmosDBLocation": {
+                            "type": "string"
+                        },
+                        "multipleWriteLocations": {
+                            "type": "bool"
+                        },
+                        "consistencyPolicy": {
+                            "type": "object"
+                        },
+                        "databaseAccountOfferType": {
+                            "type": "string",
+                            "allowedValues": [
+                                "Standard"
+                            ]
+                        },
+                        "mdsDatabaseName": {
+                            "type": "string"
+                        },
+                        "mdsContainers": {
+                            "type": "array"
+                        },
+                        "mdsJobContainer": {
+                            "type": "object"
+                        },
+                        "jobQueueStorageAccountName": {
+                            "type": "string"
+                        },
+                        "jobQueueStorageSkuName": {
+                            "type": "string"
+                        },
+                        "jobQueueStorageSkuTier": {
+                            "type": "string"
+                        },
+                        "location": {
+                            "type": "string"
+                        },
+                        "locations": {
+                            "type": "array"
+                        },
+                        "clusterRoleAssignmentId": {
+                            "type": "string"
+                        },
+                        "aksClusterKubeletIdentityObjectId": {
+                            "type": "string"
+                        },
+                        "jobQueueStorageRoleAssignmentId": {
+                            "type": "string"
+                        }
+                    },
+                    "functions": [
+                        {
+                            "namespace": "mci4m",
+                            "members": {
+                                "getCosmosDbContainerOptions": {
+                                    "parameters": [
+                                        {
+                                            "name": "settings",
+                                            "type": "object"
+                                        }
+                                    ],
+                                    "output": {
+                                        "type": "object",
+                                        "value": "[if(contains(parameters('settings'), 'AutoscaleMaxThroughput'), json(concat('{\"autoscaleSettings\": {\"maxThroughput\": ', parameters('settings').AutoscaleMaxThroughput, '}}')), json(concat('{\"throughput\": ', parameters('settings').Throughput, '}')))]"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "variables": {
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.DocumentDB/databaseAccounts",
+                            "name": "[parameters('cosmosDBAccountName')]",
+                            "apiVersion": "2019-08-01",
+                            "kind": "GlobalDocumentDB",
+                            "location": "[parameters('cosmosDBLocation')]",
+                            "properties": {
+                                "locations": "[parameters('locations')]",
+                                "databaseAccountOfferType": "[parameters('databaseAccountOfferType')]",
+                                "enableMultipleWriteLocations": "[parameters('multipleWriteLocations')]",
+                                "consistencyPolicy": "[parameters('consistencyPolicy')]"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+                            "name": "[concat(parameters('cosmosDBAccountName'), '/', parameters('mdsDatabaseName'))]",
+                            "apiVersion": "2019-08-01",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDBAccountName'))]"
+                            ],
+                            "properties": {
+                                "resource": {
+                                    "id": "[parameters('mdsDatabaseName')]"
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+                            "name": "[concat(parameters('cosmosDBAccountName'), '/', parameters('mdsDatabaseName'), '/', parameters('mdsContainers')[copyIndex()].Name)]",
+                            "apiVersion": "2019-08-01",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('cosmosDBAccountName'), parameters('mdsDatabaseName'))]"
+                            ],
+                            "properties": {
+                                "resource": {
+                                    "id": "[parameters('mdsContainers')[copyIndex()].Name]",
+                                    "partitionKey": {
+                                        "paths": "[parameters('mdsContainers')[copyIndex()].PartitionKeyPaths]",
+                                        "kind": "Hash"
+                                    },
+                                    "indexingPolicy": {
+                                        "indexingMode": "consistent",
+                                        "includedPaths": [
+                                            {
+                                                "path": "/*"
+                                            }
+                                        ],
+                                        "excludedPaths": [
+                                            {
+                                                "path": "/myPathToNotIndex/*"
+                                            }
+                                        ]
+                                    },
+                                    "options": "[mci4m.getCosmosDbContainerOptions(parameters('mdsContainers')[copyIndex()])]"
+                                }
+                            },
+                            "copy": {
+                                "name": "containercopy",
+                                "count": "[length(parameters('mdsContainers'))]"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+                            "name": "[concat(parameters('cosmosDBAccountName'), '/', parameters('mdsDatabaseName'), '/', parameters('mdsJobContainer').Name)]",
+                            "apiVersion": "2019-08-01",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('cosmosDBAccountName'), parameters('mdsDatabaseName'))]"
+                            ],
+                            "properties": {
+                                "resource": {
+                                    "id": "[parameters('mdsJobContainer').Name]",
+                                    "partitionKey": {
+                                        "paths": "[parameters('mdsJobContainer').PartitionKeyPaths]",
+                                        "kind": "Hash"
+                                    },
+                                    "indexingPolicy": {
+                                        "indexingMode": "consistent",
+                                        "automatic": true,
+                                        "includedPaths": [
+                                            {
+                                                "path": "/DeletedTime/?"
+                                            },
+                                            {
+                                                "path": "/State/?"
+                                            }
+                                        ],
+                                        "excludedPaths": [
+                                            {
+                                                "path": "/*"
+                                            },
+                                            {
+                                                "path": "/\"_etag\"/?"
+                                            }
+                                        ],
+                                        "compositeIndexes": [
+                                            [
+                                                {
+                                                    "path": "/pk",
+                                                    "order": "ascending"
+                                                },
+                                                {
+                                                    "path": "/id",
+                                                    "order": "ascending"
+                                                }
+                                            ]
+                                        ]
+                                    },
+                                    "options": "[mci4m.getCosmosDbContainerOptions(parameters('mdsJobContainer'))]"
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "name": "[parameters('clusterRoleAssignmentId')]",
+                            "apiVersion": "2020-04-01-preview",
+                            "scope": "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDBAccountName'))]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDBAccountName'))]"
+                            ],
+                            "properties": {
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/5bd9cd88-fe45-4216-938b-f97437e15450')]",
+                                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "name": "[parameters('jobQueueStorageAccountName')]",
+                            "apiVersion": "2019-06-01",
+                            "location": "[parameters('location')]",
+                            "kind": "StorageV2",
+                            "sku": {
+                                "name": "[parameters('jobQueueStorageSkuName')]",
+                                "tier": "[parameters('jobQueueStorageSkuTier')]"
+                            },
+                            "properties": {
+                                "networkAcls": {
+                                    "resourceAccessRules": [],
+                                    "bypass": "None",
+                                    "virtualNetworkRules": [],
+                                    "ipRules": [],
+                                    "defaultAction": "Allow"
+                                },
+                                "accessTier": "Hot"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "name": "[parameters('jobQueueStorageRoleAssignmentId')]",
+                            "apiVersion": "2020-04-01-preview",
+                            "scope": "[concat('Microsoft.Storage/storageAccounts/', parameters('jobQueueStorageAccountName'))]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts/', parameters('jobQueueStorageAccountName'))]"
+                            ],
+                            "properties": {
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/974c5e8b-45b9-4653-ba55-5f855dd0fb88')]",
+                                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-09-01",
+            "name": "SynapseWorkspaceDeployment",
+            "resourceGroup": "[parameters('synapseResourceGroupName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups', parameters('synapseResourceGroupName'))]",
+                "KubernetesClusterDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "synapseStorageAccountName": {
+                        "value": "[parameters('synapseStorageAccountName')]"
+                    },
+                    "synapseStorageAccountLocation": {
+                        "value": "[parameters('synapseStorageAccountLocation')]"
+                    },
+                    "synapseFileSystemContainerName": {
+                        "value": "[parameters('synapseFileSystemContainerName')]"
+                    },
+                    "synapseWorkspaceName": {
+                        "value": "[parameters('synapseWorkspaceName')]"
+                    },
+                    "synapseWorkspaceLocation": {
+                        "value": "[parameters('synapseWorkspaceLocation')]"
+                    },
+                    "synapseStorageRoleAssignmentId": {
+                        "value": "[parameters('synapseStorageRoleAssignmentId')]"
+                    },
+                    "aksClusterKubeletIdentityObjectId": {
+                        "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterKubeletIdentityObjectId.value]"
+                    },
+                    "synapseRoleAssignmentId": {
+                        "value": "[parameters('synapseRoleAssignmentId')]"
+                    },
+                    "blobStorageContributorRoleAssignmentId": {
+                        "value": "[parameters('blobStorageContributorRoleAssignmentId')]"
+                    },
+                    "blobKeyOperatorStorageRoleAssignmentId": {
+                        "value": "[parameters('blobKeyOperatorStorageRoleAssignmentId')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "synapseStorageAccountName": {
+                            "type": "string"
+                        },
+                        "synapseStorageAccountLocation": {
+                            "type": "string"
+                        },
+                        "synapseFileSystemContainerName": {
+                            "type": "string"
+                        },
+                        "synapseWorkspaceName": {
+                            "type": "string"
+                        },
+                        "synapseWorkspaceLocation": {
+                            "type": "string"
+                        },
+                        "synapseStorageRoleAssignmentId": {
+                            "type": "string"
+                        },
+                        "aksClusterKubeletIdentityObjectId": {
+                            "type": "string"
+                        },
+                        "synapseRoleAssignmentId": {
+                            "type": "string"
+                        },
+                        "blobStorageContributorRoleAssignmentId": {
+                            "type": "string"
+                        },
+                        "blobKeyOperatorStorageRoleAssignmentId": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {
+                        "ownerRoleDefintionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+                        "storageBlobContributorRoleDefintionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                        "storageResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "name": "[parameters('synapseStorageAccountName')]",
+                            "apiVersion": "2021-01-01",
+                            "location": "[parameters('synapseStorageAccountLocation')]",
+                            "properties": {
+                                "networkAcls": {
+                                    "resourceAccessRules": [],
+                                    "bypass": "None",
+                                    "virtualNetworkRules": [],
+                                    "ipRules": [],
+                                    "defaultAction": "Allow"
+                                },
+                                "accessTier": "Hot",
+                                "supportsHttpsTrafficOnly": true,
+                                "isHnsEnabled": true
+                            },
+                            "sku": {
+                                "name": "Standard_RAGRS"
+                            },
+                            "kind": "StorageV2",
+                            "resources": [
+                                {
+                                    "name": "[concat('default/', parameters('synapseFileSystemContainerName'))]",
+                                    "type": "blobServices/containers",
+                                    "apiVersion": "2021-01-01",
+                                    "properties": {
+                                        "publicAccess": "None"
+                                    },
+                                    "dependsOn": [
+                                        "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "apiVersion": "2021-06-01",
+                            "name": "[parameters('synapseWorkspaceName')]",
+                            "location": "[parameters('synapseWorkspaceLocation')]",
+                            "type": "Microsoft.Synapse/workspaces",
+                            "dependsOn": [
+                                "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"
+                            ],
+                            "identity": {
+                                "type": "SystemAssigned"
+                            },
+                            "properties": {
+                                "defaultDataLakeStorage": {
+                                    "accountUrl": "[concat('https://', parameters('synapseStorageAccountName'), '.dfs.core.windows.net')]",
+                                    "filesystem": "[parameters('synapseFileSystemContainerName')]",
+                                    "resourceId": "[variables('storageResourceId')]",
+                                    "createManagedPrivateEndpoint": true
+                                },
+                                "managedVirtualNetwork": "default",
+                                "managedResourceGroupName": "",
+                                "managedVirtualNetworkSettings": {
+                                    "allowedAadTenantIdsForLinking": [],
+                                    "preventDataExfiltration": false
+                                },
+                                "sqlAdministratorLogin": "sqladminuser",
+                                "sqlAdministratorLoginPassword": ""
+                            },
+                            "resources": [
+                                {
+                                    "apiVersion": "2021-06-01",
+                                    "dependsOn": [
+                                        "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"
+                                    ],
+                                    "location": "[parameters('synapseWorkspaceLocation')]",
+                                    "name": "allowAll",
+                                    "properties": {
+                                        "startIpAddress": "0.0.0.0",
+                                        "endIpAddress": "255.255.255.255"
+                                    },
+                                    "type": "firewallrules"
+                                },
+                                {
+                                    "apiVersion": "2021-06-01",
+                                    "dependsOn": [
+                                        "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"
+                                    ],
+                                    "location": "[parameters('synapseWorkspaceLocation')]",
+                                    "name": "default",
+                                    "properties": {
+                                        "grantSqlControlToManagedIdentity": {
+                                            "desiredState": "Enabled"
+                                        }
+                                    },
+                                    "type": "managedIdentitySqlControlSettings"
+                                }
+                            ]
+                        },
+                        {	
+                            "type": "Microsoft.Synapse/workspaces/providers/roleAssignments",	
+                            "apiVersion": "2018-09-01-preview",	
+                            "name": "[concat(parameters('synapseWorkspaceName'), '/Microsoft.Authorization/', parameters('synapseRoleAssignmentId'))]",	
+                            "dependsOn": [	
+                                "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"	
+                            ],	
+                            "properties": {	
+                                "roleDefinitionId": "[variables('ownerRoleDefintionId')]",	
+                                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]",	
+                                "principalType": "ServicePrincipal"	
+                            }	
+                        },	
+                        {	
+                            "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",	
+                            "apiVersion": "2018-09-01-preview",	
+                            "name": "[concat(parameters('synapseStorageAccountName'), '/Microsoft.Authorization/', parameters('synapseStorageRoleAssignmentId'))]",	
+                            "dependsOn": [	
+                                "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"	
+                            ],	
+                            "properties": {	
+                              "roleDefinitionId": "[variables('storageBlobContributorRoleDefintionId')]",	
+                              "principalId": "[reference(concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName')), '2019-06-01-preview', 'Full').identity.principalId]",	
+                              "principalType": "ServicePrincipal"	
+                            }	
+                        },	
+                        {	
+                            "type": "Microsoft.Authorization/roleAssignments",	
+                            "name": "[parameters('blobStorageContributorRoleAssignmentId')]",	
+                            "apiVersion": "2020-04-01-preview",	
+                            "scope": "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]",	
+                            "dependsOn": [	
+                                "[resourceId('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"	
+                            ],	
+                            "properties": {	
+                                "roleDefinitionId": "[variables('storageBlobContributorRoleDefintionId')]",	
+                                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]"	
+                            }	
+                        },	
+                        {	
+                            "type": "Microsoft.Authorization/roleAssignments",	
+                            "name": "[parameters('blobKeyOperatorStorageRoleAssignmentId')]",	
+                            "apiVersion": "2020-04-01-preview",	
+                            "scope": "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]",	
+                            "dependsOn": [	
+                                "[resourceId('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"	
+                            ],	
+                            "properties": {	
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/81a9662b-bebf-436f-a333-f67b29880f12')]",	
+                                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]"	
+                            }	
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-09-01",
+            "name": "ClusterKeyVaultDeployment",
+            "resourceGroup": "[parameters('aksResourceGroupName')]",
+            "dependsOn": [
+                "DatabaseDeployment",
+                "KubernetesClusterDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "databaseResourceGroupName": {
+                        "value": "[parameters('databaseResourceGroupName')]"
+                    },
+                    "aksClusterTenantId": {
+                        "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterTenantId.value]"
+                    },
+                    "aksClusterKubeletIdentityObjectId": {
+                        "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterKubeletIdentityObjectId.value]"
+                    },
+                    "clusterKeyVaultName": {
+                        "value": "[parameters('clusterKeyVaultName')]"
+                    },
+                    "aksResourceGroupName": {
+                        "value": "[parameters('aksResourceGroupName')]"
+                    },
+                    "aksClusterLocation": {
+                        "value": "[parameters('aksClusterLocation')]"
+                    },
+                    "clusterKeyVaultSku": {
+                        "value": "[parameters('clusterKeyVaultSku')]"
+                    },
+                    "jobQueueStorageAccountName": {
+                        "value": "[parameters('jobQueueStorageAccountName')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "clusterKeyVaultName": {
+                            "type": "string"
+                        },
+                        "aksClusterTenantId": {
+                            "type": "string"
+                        },
+                        "aksClusterKubeletIdentityObjectId": {
+                            "type": "string"
+                        },
+                        "aksResourceGroupName": {
+                            "type": "string"
+                        },
+                        "aksClusterLocation": {
+                            "type": "string"
+                        },
+                        "databaseResourceGroupName": {
+                            "type": "string"
+                        },
+                        "clusterKeyVaultSku": {
+                            "type": "string"
+                        },
+                        "jobQueueStorageAccountName": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {
+                        "keyVaultApiVersion": "2018-02-14"
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "[variables('keyVaultApiVersion')]",
+                            "name": "[parameters('clusterKeyVaultName')]",
+                            "location": "[parameters('aksClusterLocation')]",
+                            "type": "Microsoft.KeyVault/vaults",
+                            "properties": {
+                                "enabledForDeployment": true,
+                                "enabledForTemplateDeployment": true,
+                                "enabledForDiskEncryption": true,
+                                "enableRbacAuthorization": false,
+                                "tenantId": "[parameters('aksClusterTenantId')]",
+                                "accessPolicies": [
+                                    {
+                                        "tenantId": "[parameters('aksClusterTenantId')]",
+                                        "objectId": "[parameters('aksClusterKubeletIdentityObjectId')]",
+                                        "dependsOn": [
+                                        ],
+                                        "permissions": {
+                                            "keys": [
+                                                "Get",
+                                                "List",
+                                                "Update",
+                                                "Create",
+                                                "Import",
+                                                "WrapKey",
+                                                "UnwrapKey",
+                                                "Encrypt",
+                                                "Decrypt"
+                                            ],
+                                            "secrets": [
+                                                "get",
+                                                "list"
+                                            ],
+                                            "certificates": [
+                                                "get",
+                                                "list",
+                                                "import"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "sku": {
+                                    "name": "[parameters('clusterKeyVaultSku')]",
+                                    "family": "A"
+                                },
+                                "publicNetworkAccess": "Enabled",
+                                "enableSoftDelete": true,
+                                "softDeleteRetentionInDays": 90,
+                                "networkAcls": {
+                                    "defaultAction": "allow",
+                                    "bypass": "AzureServices",
+                                    "ipRules": [],
+                                    "virtualNetworkRules": []
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.KeyVault/vaults/secrets",
+                            "apiVersion": "[variables('keyVaultApiVersion')]",
+                            "name": "[concat(parameters('clusterKeyVaultName'), '/clusterStorageConnectionString')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.KeyVault/vaults', parameters('clusterKeyVaultName'))]"
+                            ],
+                            "properties": {
+                                "contentType": "password",
+                                "value": "[concat('DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=', parameters('jobQueueStorageAccountName'), ';AccountKey=', listKeys(concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('databaseResourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', parameters('jobQueueStorageAccountName')), '2019-06-01').keys[0].value)]"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "clusterStorageConnectionStringUri": {
+                            "type": "string",
+                            "value": "[reference(concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('aksResourceGroupName'), '/providers/Microsoft.KeyVault/vaults/', parameters('clusterKeyVaultName'), '/secrets/clusterStorageConnectionString'), variables('keyVaultApiVersion'), 'Full').properties.secretUriWithVersion]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-09-01",
+            "name": "PostResourceProvisioningScriptDeployment",
+            "resourceGroup": "[parameters('aksResourceGroupName')]",
+            "dependsOn": [
+                "ClusterKeyVaultDeployment",
+                "DatabaseDeployment",
+                "KubernetesClusterDeployment",
+                "SynapseWorkspaceDeployment",
+                "ConnectAKStoACRRoleAssignmentDeployment",
+                "AksVnetDeployment",
+                "ContainerRegistryDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "databaseId": {
+                        "value": "IDSDatabaseProvider"
+                    },
+                    "databaseServiceEndpoint" : {
+                        "value": "[format('https://{0}.documents.azure.com:443/', parameters('cosmosDBAccountName'))]"
+                    },
+                    "databaseDatabaseId" : {
+                        "value": "[parameters('mdsDatabaseName')]"
+                    },
+                    "databaseAccountUri" : {
+                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('databaseResourceGroupName'), '/providers/Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDBAccountName'))]"
+                    },
+                    "blobStorageProviderId" : {
+                        "value": "IDSBlobStorageProvider"
+                    },
+                    "blobStorageSubscription" : {
+                        "value": "[subscription().id]"
+                    },
+                    "blobStorageResourceGroup": {
+                        "value": "[parameters('synapseResourceGroupName')]"
+                    },
+                    "blobStorageAccountName": {
+                        "value": "[parameters('synapseStorageAccountName')]"
+                    },
+                    "blobStorageAccountUrl": {
+                        "value": "[format('https://{0}.blob.core.windows.net/', parameters('synapseStorageAccountName'))]"
+                    },
+                    "synapseWorkspaceName" : {
+                        "value": "[parameters('synapseWorkspaceName')]"
+                    },
+                    "synapseWorkspaceUri" : {
+                        "value": "[format('https://{0}.dev.azuresynapse.net', parameters('synapseWorkspaceName'))]"
+                    },
+                    "synapseStorageAccountName" : {
+                        "value": "[parameters('synapseStorageAccountName')]"
+                    },
+                    "synapseFileSystemContainerName" : {
+                        "value": "synapsefilesystem"
+                    },
+                    "synapseDatabaseName" : {
+                        "value": "mdsdatabase"
+                    },
+                    "synapseSparkPoolName" : {
+                        "value": "someSparkPoolName"
+                    },
+                    "jobManagementQueueConnectionString" : {
+                        "value": "[reference('ClusterKeyVaultDeployment').outputs.clusterStorageConnectionStringUri.value]"
+                    },
+                    "jobManagementServiceEndpoint" : {
+                        "value": "[format('https://{0}.documents.azure.com:443/', parameters('cosmosDBAccountName'))]"
+                    },
+                    "jobManagementAccountUri" : {
+                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('databaseResourceGroupName'), '/providers/Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDBAccountName'))]"
+                    },
+                    "jobManagementDatabaseName" : {
+                        "value": "[parameters('mdsDatabaseName')]"
+                    },
+                    "jobManagementCollectionName" : {
+                        "value": "JobsCollection"
+                    },
+                    "jobManagementQueueNamePrefix" : {
+                        "value": "idsjobqueue"
+                    },
+                    "aksResourceGroupName": {
+                        "value": "[parameters('aksResourceGroupName')]"
+                    },
+                    "aksClusterLocation": {
+                        "value": "[parameters('aksClusterLocation')]"
+                    },
+                    "aksClusterName": {
+                        "value": "[parameters('aksClusterName')]"
+                    },
+                    "appInsightsInstrumentationKey": {
+                        "value": "[reference('KubernetesClusterDeployment').outputs.appInsightsInstrumentationKey.value]"	
+                    },
+                    "hostedEnvMsiVlientId": {
+                        "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterKubeletIdentityClientId.value]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "databaseId": {
+                            "type": "string"
+                        },
+                        "databaseServiceEndpoint" : {
+                            "type": "string"
+                        },
+                        "databaseDatabaseId" : {
+                            "type": "string"
+                        },
+                        "databaseAccountUri" : {
+                            "type": "string"
+                        },
+                        "blobStorageProviderId" : {
+                            "type": "string"
+                        },
+                        "blobStorageSubscription" : {
+                            "type": "string"
+                        },
+                        "blobStorageResourceGroup" : {
+                            "type": "string"
+                        },
+                        "blobStorageAccountName" : {
+                            "type": "string"
+                        },
+                        "blobStorageAccountUrl" : {
+                            "type": "string"
+                        },
+                        "synapseWorkspaceName" : {
+                            "type": "string"
+                        },
+                        "synapseWorkspaceUri" : {
+                            "type": "string"
+                        },
+                        "synapseStorageAccountName" : {
+                            "type": "string"
+                        },
+                        "synapseFileSystemContainerName" : {
+                            "type": "string"
+                        },
+                        "synapseDatabaseName" : {
+                            "type": "string"
+                        },
+                        "synapseSparkPoolName" : {
+                            "type": "string"
+                        },
+                        "jobManagementQueueConnectionString" : {
+                            "type": "string"
+                        },
+                        "jobManagementServiceEndpoint" : {
+                            "type": "string"
+                        },
+                        "jobManagementAccountUri" : {
+                            "type": "string"
+                        },
+                        "jobManagementDatabaseName" : {
+                            "type": "string"
+                        },
+                        "jobManagementCollectionName" : {
+                            "type": "string"
+                        },
+                        "jobManagementQueueNamePrefix" : {
+                            "type": "string"
+                        },
+                        "aksResourceGroupName": {
+                            "type": "string"
+                        },
+                        "aksClusterLocation": {
+                            "type": "string"
+                        },
+                        "aksClusterName": {
+                            "type": "string"
+                        },
+                        "appInsightsInstrumentationKey": {
+                            "type": "string"
+                        },
+                        "hostedEnvMsiVlientId": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {
+                        "userAssignedIdentityName": "userAssignedIdentityForStartingPod",
+                        "roleAssignmentName": "[guid(concat(resourceGroup().id, 'contributor'))]",
+                        "contributorRoleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                        "deploymentScriptName": "InstallDependencyAndRunWebServer",
+                        "idsServiceImageName": "kraman4mdscoredf.azurecr.io/mdsservice",
+                        "workerServiceImageName": "kraman4mdscoredf.azurecr.io/workerservice",
+                        "metadataForScript": "[uniqueString(guid('metadata'))]"
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                            "apiVersion": "2018-11-30",
+                            "name": "[variables('userAssignedIdentityName')]",
+                            "location": "[parameters('aksClusterLocation')]"
+                        },
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2020-04-01-preview",
+                            "name": "[variables('roleAssignmentName')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName'))]"
+                            ],
+                            "properties": {
+                                "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
+                                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName')), '2015-08-31-preview').principalId]",
+                                "scope": "[resourceGroup().id]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Resources/deploymentScripts",
+                            "apiVersion": "2020-10-01",
+                            "name": "[variables('deploymentScriptName')]",
+                            "location": "[parameters('aksClusterLocation')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Authorization/roleAssignments', variables('roleAssignmentName'))]"
+                            ],
+                            "kind": "AzureCLI",
+                            "identity": {
+                                "type": "UserAssigned",
+                                "userAssignedIdentities": {
+                                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',variables('userAssignedIdentityName'))]": {}
+                                }
+                            },
+                            "properties": {
+                                "azCliVersion": "2.37.0",
+                                "environmentVariables": [
+                                    {
+                                        "name": "DatabaseId",
+                                        "value": "[parameters('databaseId')]"
+                                    },
+                                    {
+                                        "name": "DatabaseServiceEndpoint",
+                                        "value": "[parameters('databaseServiceEndpoint')]"
+                                    },
+                                    {
+                                        "name": "DatabaseDatabaseId",
+                                        "value": "[parameters('databaseDatabaseId')]"
+                                    },
+                                    {
+                                        "name": "DatabaseAccountUri",
+                                        "value": "[parameters('databaseAccountUri')]"
+                                    },
+                                    {
+                                        "name": "BlobStorageProviderId",
+                                        "value": "[parameters('blobStorageProviderId')]"
+                                    },
+                                    {
+                                        "name": "BlobStorageSubscription",
+                                        "value": "[parameters('blobStorageSubscription')]"
+                                    },
+                                    {
+                                        "name": "BlobStorageResourceGroup",
+                                        "value": "[parameters('blobStorageResourceGroup')]"
+                                    },
+                                    {
+                                        "name": "BlobStorageAccountName",
+                                        "value": "[parameters('blobStorageAccountName')]"
+                                    },
+                                    {
+                                        "name": "BlobStorageAccountUrl",
+                                        "value": "[parameters('blobStorageAccountUrl')]"
+                                    },
+                                    {
+                                        "name": "SynapseWorkspaceName",
+                                        "value": "[parameters('synapseWorkspaceName')]"
+                                    },
+                                    {
+                                        "name": "SynapseWorkspaceUri",
+                                        "value": "[parameters('synapseWorkspaceUri')]"
+                                    },
+                                    {
+                                        "name": "SynapseStorageAccountName",
+                                        "value": "[parameters('synapseStorageAccountName')]"
+                                    },
+                                    {
+                                        "name": "SynapseFileSystemContainerName",
+                                        "value": "[parameters('synapseFileSystemContainerName')]"
+                                    },
+                                    {
+                                        "name": "SynapseDatabaseName",
+                                        "value": "[parameters('synapseDatabaseName')]"
+                                    },
+                                    {
+                                        "name": "SynapseSparkPoolName",
+                                        "value": "[parameters('synapseSparkPoolName')]"
+                                    },
+                                    {
+                                        "name": "JobManagementQueueConnectionString",
+                                        "value": "[parameters('jobManagementQueueConnectionString')]"
+                                    },
+                                    {
+                                        "name": "JobManagementServiceEndpoint",
+                                        "value": "[parameters('jobManagementServiceEndpoint')]"
+                                    },
+                                    {
+                                        "name": "JobManagementAccountUri",
+                                        "value": "[parameters('jobManagementAccountUri')]"
+                                    },
+                                    {
+                                        "name": "JobManagementDatabaseName",
+                                        "value": "[parameters('jobManagementDatabaseName')]"
+                                    },
+                                    {
+                                        "name": "JobManagementCollectionName",
+                                        "value": "[parameters('jobManagementCollectionName')]"
+                                    },
+                                    {
+                                        "name": "JobManagementQueueNamePrefix",
+                                        "value": "[parameters('jobManagementQueueNamePrefix')]"
+                                    },
+                                    {
+                                        "name": "AksSubscriptionId",
+                                        "value": "[subscription().id]"
+                                    },
+                                    {
+                                        "name": "AksResourceGroupName",
+                                        "value": "[parameters('aksResourceGroupName')]"
+                                    },
+                                    {
+                                        "name": "AksClusterLocation",
+                                        "value": "[parameters('aksClusterLocation')]"
+                                    },
+                                    {
+                                        "name": "AksClusterName",
+                                        "value": "[parameters('aksClusterName')]"
+                                    },
+                                    {
+                                        "name": "AppInsightsInstrumentationKey",
+                                        "value": "[parameters('appInsightsInstrumentationKey')]"
+                                    },
+                                    {
+                                        "name": "HostedEnvMsiVlientId",
+                                        "value": "[parameters('hostedEnvMsiVlientId')]"
+                                    },
+                                    {
+                                        "name": "IdsServiceImageName",
+                                        "value": "[variables('idsServiceImageName')]"
+                                    },
+                                    {
+                                        "name": "WorkerServiceImageName",
+                                        "value": "[variables('workerServiceImageName')]"
+                                    },
+                                    {
+                                        "name": "MetadataToRunScriptEverytime",
+                                        "value": "[variables('metadataForScript')]"
+                                    }
+                                ],
+                                "scriptContent": "
+                                    echo \"Run Id: $MetadataToRunScriptEverytime\";
+                                    deploymentScriptFileUrl=\"https://raw.githubusercontent.com/aman0303/rawFiles/main/armScript.sh \";
+                                    deploymentScriptFile=\"run.sh\";
+                                    wget -O $deploymentScriptFile $deploymentScriptFileUrl;
+                                    IdsServiceImageName=\"kraman4mdscoredf.azurecr.io/mdsservice\";
+                                    echo $IdsServiceImageName;
+                                    WorkerServiceImageName=\"kraman4mdscoredf.azurecr.io/workerservice\";
+                                    echo $WorkerServiceImageName;
+                                    bash $deploymentScriptFile;
+                                    ",
+                                "cleanupPreference": "OnSuccess",
+                                "retentionInterval": "P1D"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "subscriptionId": {
+            "type": "string",
+            "value": "[subscription().subscriptionId]"
+        },
+        "blobStorageResourceGroup": {
+            "type": "string",
+            "value": "[parameters('synapseResourceGroupName')]"
+        },
+        "blobStorageAccountName": {
+            "type": "string",
+            "value": "[parameters('synapseStorageAccountName')]"
+        },
+        "blobStorageAccountUrl": {
+            "type": "string",
+            "value": "[format('https://{0}.blob.core.windows.net/', parameters('synapseStorageAccountName'))]"
+        },
+        "aksClusterTenantId": {
+            "type": "string",
+            "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterTenantId.value]"
+        },
+        "aksClusterPrincipalId": {
+            "type": "string",
+            "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterPrincipalId.value]"
+        },
+        "aksClusterKubeletIdentityObjectId": {
+            "type": "string",
+            "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterKubeletIdentityObjectId.value]"
+        },
+        "aksClusterKubeletIdentityClientId": {
+            "type": "string",
+            "value": "[reference('KubernetesClusterDeployment').outputs.aksClusterKubeletIdentityClientId.value]"
+        },
+        "appInsightsInstrumentationKey": {
+            "type": "string",
+            "value": "[reference('KubernetesClusterDeployment').outputs.appInsightsInstrumentationKey.value]"
+        },
+        "clusterStorageConnectionStringUri": {
+            "type": "string",
+            "value":"[reference('ClusterKeyVaultDeployment').outputs.clusterStorageConnectionStringUri.value]"
+        },
+        "mdsDatabaseName": {
+            "type": "string",
+            "value": "[parameters('mdsDatabaseName')]"
+        },
+        "cosmosDBAccountServiceEndpoint": {
+            "type": "string",
+            "value": "[format('https://{0}.documents.azure.com:443/', parameters('cosmosDBAccountName'))]"
+        },
+        "cosmosDBAccountUri": {
+            "type": "string",
+            "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('databaseResourceGroupName'), '/providers/Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDBAccountName'))]"
+        },
+        "synapseStorageAccountName": {
+            "type": "string",
+            "value": "[parameters('synapseStorageAccountName')]"
+        },
+        "synapseWorkspaceName": {
+            "type": "string",
+            "value": "[parameters('synapseWorkspaceName')]"
+        },
+        "synapseWorkspaceUri": {
+            "type": "string",
+            "value": "[format('https://{0}.dev.azuresynapse.net', parameters('synapseWorkspaceName'))]"
+        },
+        "acrRegistryName": {
+            "type": "string",
+            "value": "[parameters('acrRegistryName')]"
+        },
+        "aksClusterName": {
+            "type": "string",
+            "value": "[parameters('aksClusterName')]"
+        }
+    }
+}
