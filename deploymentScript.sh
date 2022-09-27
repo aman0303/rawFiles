@@ -37,7 +37,7 @@ sed -r -E -e "s%##DATABASE_ID##%$DatabaseId%g" \
           -e "s%##JOB_MANAGEMENT_COLLECTION_NAME##%$JobManagementCollectionName%g" \
           -e "s%##JOB_MANAGEMENT_QUEUE_NAME_PREFIX##%$JobManagementQueueNamePrefix%g" \
           -e "s%##DEFAULT_JOB_TIMEOUT##%$DefaultJobTimeout%g" \
-          -e "s%##APP_INSIGHTS_INSTRUMENTATION_KEY##%$AppInsightsInstrumentationKey%g" \
+          -e "s%##APPLICATION_INSIGHTS_INSTRUMENTATION_KEY##%$AppInsightsInstrumentationKey%g" \
           -e "s%##APPLICATION_INSIGHTS_CONNECTION_STRING##%$AppInsightsConnectionString%g" \
           -e "s%##AUTHENTICATION_TENANT_ID##%$AuthenticationTenantId%g" \
           -e "s%##HOSTED_ENV_MSI_CLIENT_ID##%$HostedEnvMsiVlientId%g" $appSettingsFile > $updatedAppSettingsFile;
