@@ -1,4 +1,4 @@
-k8DeploymentFileUrl="https://raw.githubusercontent.com/aman0303/rawFiles/main/deploymentLatest.yml";
+k8DeploymentFileUrl="https://raw.githubusercontent.com/aman0303/rawFiles/main/deploymentLatest2.yml";
 appSettingsFileUrl="https://raw.githubusercontent.com/aman0303/rawFiles/main/appsettings2.prod.json";
 workerJobSettingsFileUrl="https://raw.githubusercontent.com/aman0303/rawFiles/main/workerJobSettings.prod.json";
 configmapFileUrl="https://raw.githubusercontent.com/aman0303/rawFiles/main/configmap.yml";
