@@ -1,0 +1,225 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "synapseStorageAccountName": {
+            "type": "string"
+        },
+        "synapseStorageAccountLocation": {
+            "type": "string"
+        },
+        "synapseFileSystemContainerName": {
+            "type": "string"
+        },
+        "synapseWorkspaceName": {
+            "type": "string"
+        },
+        "synapseWorkspaceLocation": {
+            "type": "string"
+        },
+        "synapseStorageRoleAssignmentId": {
+            "type": "string"
+        },
+        "aksClusterKubeletIdentityObjectId": {
+            "type": "string"
+        },
+        "synapseRoleAssignmentId": {
+            "type": "string"
+        },
+        "blobStorageContributorRoleAssignmentId": {
+            "type": "string"
+        },
+        "blobKeyOperatorStorageRoleAssignmentId": {
+            "type": "string"
+        },	
+        "aksVnetSubnetID": {	
+            "type": "string"	
+        },	
+        "sparkPoolName": {	
+            "type": "string"	
+        }
+    },
+    "variables": {
+        "ownerRoleDefintionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+        "storageBlobContributorRoleDefintionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "storageResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('synapseStorageAccountName')]",
+            "apiVersion": "2021-01-01",
+            "location": "[parameters('synapseStorageAccountLocation')]",
+            "properties": {
+                "networkAcls": {
+                    "resourceAccessRules": [],
+                    "bypass": "None",
+                    "virtualNetworkRules": [	
+                        {	
+                            "id": "[parameters('aksVnetSubnetID')]"	
+                        }	
+                    ],	
+                    "ipRules": [],	
+                    "defaultAction": "Deny"
+                },
+                "accessTier": "Hot",
+                "supportsHttpsTrafficOnly": true,
+                "isHnsEnabled": true
+            },
+            "sku": {
+                "name": "Standard_RAGRS"
+            },
+            "kind": "StorageV2",
+            "resources": [
+                {
+                    "name": "[concat('default/', parameters('synapseFileSystemContainerName'))]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2021-01-01",
+                    "properties": {
+                        "publicAccess": "None"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"
+                    ]
+                }
+            ]
+        },
+        {
+            "apiVersion": "2021-06-01",
+            "name": "[parameters('synapseWorkspaceName')]",
+            "location": "[parameters('synapseWorkspaceLocation')]",
+            "type": "Microsoft.Synapse/workspaces",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "defaultDataLakeStorage": {
+                    "accountUrl": "[concat('https://', parameters('synapseStorageAccountName'), '.dfs.core.windows.net')]",
+                    "filesystem": "[parameters('synapseFileSystemContainerName')]",
+                    "resourceId": "[variables('storageResourceId')]",
+                    "createManagedPrivateEndpoint": true
+                },
+                "managedVirtualNetwork": "default",
+                "managedResourceGroupName": "",
+                "managedVirtualNetworkSettings": {
+                    "allowedAadTenantIdsForLinking": [],
+                    "preventDataExfiltration": false
+                },
+                "sqlAdministratorLogin": "sqladminuser",
+                "sqlAdministratorLoginPassword": ""
+            },
+            "resources": [
+                {
+                    "apiVersion": "2021-06-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"
+                    ],
+                    "location": "[parameters('synapseWorkspaceLocation')]",
+                    "name": "allowAll",
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "255.255.255.255"
+                    },
+                    "type": "firewallrules"
+                },
+                {
+                    "apiVersion": "2021-06-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"
+                    ],
+                    "location": "[parameters('synapseWorkspaceLocation')]",
+                    "name": "default",
+                    "properties": {
+                        "grantSqlControlToManagedIdentity": {
+                            "desiredState": "Enabled"
+                        }
+                    },
+                    "type": "managedIdentitySqlControlSettings"
+                }
+            ]
+        },
+        {	
+            "apiVersion": "2021-06-01",	
+            "type": "Microsoft.Synapse/workspaces/bigDataPools",	
+            "name": "[concat(parameters('synapseWorkspaceName'), '/', parameters('sparkPoolName'))]",	
+            "location": "[parameters('synapseWorkspaceLocation')]",	
+            "dependsOn": [	
+                "[parameters('synapseWorkspaceName')]"	
+            ],	
+            "properties": {	
+                "nodeCount": 3,	
+                "nodeSizeFamily": "MemoryOptimized",	
+                "nodeSize": "Small",	
+                "autoScale": {	
+                "enabled": false	
+                },	
+                "autoPause": {	
+                "enabled": true,	
+                "delayInMinutes": 15	
+                },	
+                "sparkVersion": 3.2	
+            }	
+        },
+        {	
+            "type": "Microsoft.Synapse/workspaces/providers/roleAssignments",	
+            "apiVersion": "2018-09-01-preview",	
+            "name": "[concat(parameters('synapseWorkspaceName'), '/Microsoft.Authorization/', parameters('synapseRoleAssignmentId'))]",	
+            "dependsOn": [	
+                "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"	
+            ],	
+            "properties": {	
+                "roleDefinitionId": "[variables('ownerRoleDefintionId')]",	
+                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]",	
+                "principalType": "ServicePrincipal"	
+            }	
+        },	
+        {	
+            "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",	
+            "apiVersion": "2018-09-01-preview",	
+            "name": "[concat(parameters('synapseStorageAccountName'), '/Microsoft.Authorization/', parameters('synapseStorageRoleAssignmentId'))]",	
+            "dependsOn": [	
+                "[concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName'))]"	
+            ],	
+            "properties": {	
+                "roleDefinitionId": "[variables('storageBlobContributorRoleDefintionId')]",	
+                "principalId": "[reference(concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName')), '2019-06-01-preview', 'Full').identity.principalId]",	
+                "principalType": "ServicePrincipal"	
+            }	
+        },	
+        {	
+            "type": "Microsoft.Authorization/roleAssignments",	
+            "name": "[parameters('blobStorageContributorRoleAssignmentId')]",	
+            "apiVersion": "2020-04-01-preview",	
+            "scope": "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]",	
+            "dependsOn": [	
+                "[resourceId('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"	
+            ],	
+            "properties": {	
+                "roleDefinitionId": "[variables('storageBlobContributorRoleDefintionId')]",	
+                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]"	
+            }	
+        },	
+        {	
+            "type": "Microsoft.Authorization/roleAssignments",	
+            "name": "[parameters('blobKeyOperatorStorageRoleAssignmentId')]",	
+            "apiVersion": "2020-04-01-preview",	
+            "scope": "[concat('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]",	
+            "dependsOn": [	
+                "[resourceId('Microsoft.Storage/storageAccounts/', parameters('synapseStorageAccountName'))]"	
+            ],	
+            "properties": {	
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/81a9662b-bebf-436f-a333-f67b29880f12')]",	
+                "principalId": "[parameters('aksClusterKubeletIdentityObjectId')]"	
+            }	
+        }
+    ],
+    "outputs": {
+        "synapseWorkspacePrincipalId": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.Synapse/workspaces/', parameters('synapseWorkspaceName')), '2019-06-01-preview', 'Full').identity.principalId]"
+        }
+    }
+}
