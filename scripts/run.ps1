@@ -2,9 +2,9 @@ $k8DeploymentFileUrl = "https://raw.githubusercontent.com/aman0303/rawFiles/main
 $appSettingsFileUrl = "https://raw.githubusercontent.com/aman0303/rawFiles/main/Configs/appsettings.prod.json";
 $configmapFileUrl = "https://raw.githubusercontent.com/aman0303/rawFiles/main/configmap.yml";
 
-$k8DeploymentFilePath = ".\deployment.yml";
-$appSettingsFilePath = ".\appsettings.prod.json";
-$configmapFilePath = ".\configmap.yml";
+$k8DeploymentFilePath = "deployment.yml";
+$appSettingsFilePath = "appsettings.prod.json";
+$configmapFilePath = "configmap.yml";
 
 Invoke-WebRequest $k8DeploymentFileUrl -OutFile $k8DeploymentFilePath;
 Invoke-WebRequest $appSettingsFileUrl -OutFile $appSettingsFilePath;
