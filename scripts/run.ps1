@@ -89,10 +89,13 @@ CompressionLevel = "Fastest"
 DestinationPath = ".\FileAttachment.Zip"
 };
 
-Compress-Archive -Path @(".\deployment.yml", ".\configmap.yml") -DestinationPath ".\FileAttachment.Zip" -Update -Force;
+#Compress-Archive -Path @(".\deployment.yml", ".\configmap.yml") -DestinationPath ".\FileAttachment.Zip" -Update -Force;
 
 Set-AzContext -Subscription ${Env:AksSubscriptionId};
 
-$cmd = "chmod -R 777 /command-files && kubectl apply -f configmap.yml && kubectl apply -f deployment.yml";
+$cmd1 = "chmod -R 777 /command-files && kubectl apply -f configmap.yml";
+$cmd2 = "chmod -R 777 /command-files && kubectl apply -f deployment.yml";
 
-Invoke-AzAksRunCommand -ResourceGroupName ${Env:AksResourceGroupName} -Name ${Env:AksClusterName} -Command $cmd -CommandContextAttachmentZip ".\FileAttachment.Zip" -Force;
+Invoke-AzAksRunCommand -ResourceGroupName ${Env:AksResourceGroupName} -Name ${Env:AksClusterName} -Command $cmd1 -CommandContextAttachment $configmapFilePath -Force;
+
+Invoke-AzAksRunCommand -ResourceGroupName ${Env:AksResourceGroupName} -Name ${Env:AksClusterName} -Command $cmd2 -CommandContextAttachment $k8DeploymentFilePath -Force;
