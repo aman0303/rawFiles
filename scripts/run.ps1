@@ -79,9 +79,9 @@ Write-Host "updating configmap.yml file";
 
 Write-Host "updating deployment.yml file";
 
-(Get-Content $k8DeploymentFilePath) -Replace '##imagename##', $imageFullName | Set-Content $k8DeploymentFilePath;
+(Get-Content $k8DeploymentFilePath) -Replace '##imagename##', ${Env:IdsServiceImageName} | Set-Content $k8DeploymentFilePath;
 
-(Get-Content $k8DeploymentFilePath) -Replace '##workerimagename##', $workerImageFullName | Set-Content $k8DeploymentFilePath;
+(Get-Content $k8DeploymentFilePath) -Replace '##workerimagename##', ${Env:WorkerServiceImageName} | Set-Content $k8DeploymentFilePath;
 
 $toCompress = @{
 Path = $configMapFilePath, $k8DeploymentFilePath
@@ -90,6 +90,8 @@ DestinationPath = ".\FileAttachment.Zip"
 };
 
 Compress-Archive @toCompress;
+
+Set-AzContext -Subscription ${Env:AksSubscriptionId};
 
 $cmd = "chmod -R 777 /command-files && kubectl apply -f configmap.yml && kubectl apply -f deployment.yml";
 
