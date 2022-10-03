@@ -89,7 +89,7 @@ CompressionLevel = "Fastest"
 DestinationPath = ".\FileAttachment.Zip"
 };
 
-Compress-Archive @toCompress -Update -Force;
+Compress-Archive -Path @("deployment.yml", "configmap.yml") -DestinationPath "FileAttachment.Zip" -Update -Force;
 
 Set-AzContext -Subscription ${Env:AksSubscriptionId};
 
