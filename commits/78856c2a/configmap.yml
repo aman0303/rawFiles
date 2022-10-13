@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mds-appsettings
+data:
+  appsettings.prod.json: |-
+    ##PROD_SETTINGS##
