@@ -5,7 +5,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: ##email##
+    email: kumaraman@microsoft.com
     privateKeySecretRef:
       name: letsencrypt
     solvers:
@@ -31,9 +31,6 @@ spec:
         - name: mds-appsettings-volume
           configMap:
             name: mds-appsettings
-        - name: mds-jobsettings-volume
-          configMap:
-            name: mds-jobsettings
       containers:
         - name: aks-mdsservice
           image: ##imagename##
