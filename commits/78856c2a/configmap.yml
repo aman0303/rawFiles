@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: mds-appsettings
 data:
-  appsettings.prod.json: |-
+  appsettings.Production.json: |-
     ##PROD_SETTINGS##
