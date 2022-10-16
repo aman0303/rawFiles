@@ -38,15 +38,15 @@ spec:
             - containerPort: 80
           volumeMounts:
             - name: mds-appsettings-volume
-              mountPath: /app/appsettings.prod.json
-              subPath: appsettings.prod.json
+              mountPath: /app/appsettings.Production.json
+              subPath: appsettings.Production.json
           imagePullPolicy: Always
         - name: mdsworkerservice
           image: ##workerimagename##
           volumeMounts:
             - name: mds-appsettings-volume
-              mountPath: /app/appsettings.prod.json
-              subPath: appsettings.prod.json
+              mountPath: /app/appsettings.Production.json
+              subPath: appsettings.Production.json
           imagePullPolicy: Always
       nodeSelector:
         agentpool: apppool
